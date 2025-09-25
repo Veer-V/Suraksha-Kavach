@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "surakshakavach",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
@@ -43,6 +43,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "newArchEnabled": false
   }
 }
