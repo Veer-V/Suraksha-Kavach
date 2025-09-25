@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
@@ -10,7 +11,7 @@ export default function Welcome() {
   const router = useRouter();
 
   return (
-    <View style={styles.centerContainer}>
+    <LinearGradient colors={['#E6F4FE', '#FFFFFF']} style={styles.centerContainer}>
       <Card style={{ width: width * 0.9 }}>
         <View style={styles.cardHeader}>
           <Image source={{ uri: 'https://via.placeholder.com/96x96?text=Shield' }} style={styles.logo} />
@@ -36,7 +37,7 @@ export default function Welcome() {
           </Text>
         </View>
       </Card>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#F5F5F5',
   },
   cardHeader: {
     alignItems: 'center',
@@ -58,10 +58,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#007AFF',
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 122, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   description: {
     fontSize: 16,
