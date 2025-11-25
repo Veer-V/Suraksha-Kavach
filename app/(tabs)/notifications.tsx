@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -9,7 +10,7 @@ interface Notification {
   message: string;
   timestamp: string;
   isRead: boolean;
-  type: 'safety' | 'update' | 'general';
+  type: 'safety' | 'update' | 'general' | 'alert';
 }
 
 const dummyNotifications: Notification[] = [
@@ -57,6 +58,31 @@ const dummyNotifications: Notification[] = [
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>(dummyNotifications);
+  const [lastAlertId, setLastAlertId] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = async () => {
+    try {
+      const stored = await AsyncStorage.getItem('globalNotifications');
+      if (stored) {
+        const globalNotifs: Notification[] = JSON.parse(stored);
+        const combined = [...dummyNotifications, ...globalNotifs];
+        setNotifications(combined);
+
+        // Check for new alerts and show pop-up
+        const unreadAlerts = globalNotifs.filter(n => !n.isRead && n.type === 'alert');
+        if (unreadAlerts.length > 0 && unreadAlerts[0].id !== lastAlertId) {
+          setLastAlertId(unreadAlerts[0].id);
+          Alert.alert('New Alert', unreadAlerts[0].message);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load notifications:', error);
+    }
+  };
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(notif => ({ ...notif, isRead: true })));

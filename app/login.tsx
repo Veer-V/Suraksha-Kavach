@@ -30,6 +30,17 @@ export default function Login() {
       Alert.alert(t('error'), t('pleaseEnter'));
       return;
     }
+    // Check for admin login
+    if (loginData.email === 'admin@gmail.com' && loginData.password === '12345678') {
+      try {
+        await AsyncStorage.setItem('adminToken', 'fake-admin-token');
+        await AsyncStorage.setItem('adminEmail', loginData.email);
+        router.push('/admin-dashboard');
+      } catch (error) {
+        Alert.alert(t('error'), t('loginFailed'));
+      }
+      return;
+    }
     // Authentication logic here
     console.log('Logging in:', loginData.email);
     // Simulate login

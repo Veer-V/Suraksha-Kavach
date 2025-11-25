@@ -2,9 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import { useTheme } from '../contexts/ThemeContext';
+import Button from './components/Button';
+import Card from './components/Card';
+import { useTheme } from './contexts/ThemeContext';
 
 export default function ProfessionalProfile() {
   const { isDarkMode } = useTheme();

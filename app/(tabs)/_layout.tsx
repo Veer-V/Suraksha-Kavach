@@ -4,12 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text } from 'react-native';
 
 const TABS = [
-  { name: 'dashboard', icon: 'home-filled', labelKey: 'home' },
   { name: 'services', icon: 'build-circle', labelKey: 'services' },
-  { name: 'profile', icon: 'person-outline', labelKey: 'profile' },
-  { name: 'settings', icon: 'settings', labelKey: 'settings' },
+  { name: 'dashboard', icon: 'home-filled', labelKey: 'home' },
   { name: 'notifications', icon: 'notifications-none', labelKey: 'notifications' },
-  { name: 'translation', icon: 'translate', labelKey: 'translation' },
+  { name: 'settings', icon: 'settings', labelKey: 'settings' },
+  //{ name: 'profile', icon: 'person', labelKey: 'profile' },
 ];
 
 export default function TabLayout() {

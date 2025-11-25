@@ -143,7 +143,7 @@ export default function CameraTranslate() {
           </View>
         ) : null}
         <View style={styles.section}>
-          <Button variant="outline" style={styles.backButton} onPress={() => router.push('/(tabs)/translation')}>
+          <Button variant="outline" style={styles.backButton} onPress={() => router.push('./translation')}>
 
             Back to Translation
           </Button>

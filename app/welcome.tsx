@@ -14,7 +14,7 @@ export default function Welcome() {
     <LinearGradient colors={['#E6F4FE', '#FFFFFF']} style={styles.centerContainer}>
       <Card style={{ width: width * 0.9 }}>
         <View style={styles.cardHeader}>
-          <Image source={{ uri: 'https://via.placeholder.com/96x96?text=Shield' }} style={styles.logo} />
+          <Image source={require('../assets/images/logo_SK.png')} style={styles.logo} />
           <Text style={styles.title}>सुरक्षा कवच</Text>
           <Text style={styles.description}>Your Shield for Safe Travels</Text>
         </View>

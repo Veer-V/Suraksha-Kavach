@@ -189,11 +189,7 @@ export default function VoiceTranslate() {
           </View>
         )}
 
-        <View style={styles.section}>
-          <Button variant="outline" style={styles.backButton} onPress={() => router.push('/(tabs)/translation')}>
-            Back to Translation
-          </Button>
-        </View>
+        
       </ScrollView>
     </View>
   );

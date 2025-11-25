@@ -1,24 +1,34 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import LanguagePicker from '../components/LanguagePicker';
 import { useTheme } from '../contexts/ThemeContext';
-import i18n from '../i18n';
 
 export default function Settings() {
   const router = useRouter();
   const { isDarkMode, toggleTheme } = useTheme();
-  const [language, setLanguage] = useState('en');
   const [dataSharing, setDataSharing] = useState(false);
   const [locationAccess, setLocationAccess] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', content: '' });
+  const [profile, setProfile] = useState({
+    avatarUrl: '',
+    name: '',
+    gender: '',
+    dob: '',
+    uniqueId: '',
+    token: '',
+    phone: '',
+    email: '',
+    address: '',
+    travelHistory: '',
+  });
 
   useEffect(() => {
     loadSettings();
@@ -26,21 +36,19 @@ export default function Settings() {
 
   const loadSettings = async () => {
     try {
-      const savedLanguage = await AsyncStorage.getItem('language');
-      if (savedLanguage) setLanguage(savedLanguage);
+      // Load profile
+      const keys = [
+        'avatarUrl', 'name', 'gender', 'dob', 'uniqueId', 'token',
+        'phone', 'email', 'address', 'travelHistory'
+      ];
+      const values = await AsyncStorage.multiGet(keys);
+      const data: any = {};
+      values.forEach(([key, value]) => {
+        if (value) data[key] = value;
+      });
+      setProfile(prev => ({ ...prev, ...data }));
     } catch (error) {
       console.error('Failed to load settings');
-    }
-  };
-
-
-  const changeLanguage = (lang: string) => {
-    setLanguage(lang);
-    AsyncStorage.setItem('language', lang);
-    if (['en', 'hi', 'es'].includes(lang)) {
-      i18n.changeLanguage(lang);
-    } else {
-      i18n.changeLanguage('en');
     }
   };
 
@@ -67,6 +75,25 @@ export default function Settings() {
     setModalVisible(true);
   };
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Permission to access media library is required.');
+      return;
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setProfile(prev => ({ ...prev, avatarUrl: uri }));
+      await AsyncStorage.setItem('avatarUrl', uri);
+    }
+  };
+
   const styles = getStyles(isDarkMode);
 
   return (
@@ -76,6 +103,22 @@ export default function Settings() {
         <Text style={styles.headerSubtitle}>Settings</Text>
       </LinearGradient>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+        {/* Profile Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Profile</Text>
+          <Card style={styles.sectionCard}>
+            <View style={styles.cardContent}>
+              <TouchableOpacity style={styles.profileOption} onPress={() => router.push('/profile')}>
+                <Image source={{ uri: profile.avatarUrl || 'https://via.placeholder.com/50' }} style={styles.avatar} />
+                <Text style={styles.languageText}>{profile.name || 'User'}</Text>
+                <TouchableOpacity onPress={pickImage} style={styles.editIcon}>
+                  <Ionicons name="camera" size={20} color={isDarkMode ? '#fff' : '#333333'} />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          </Card>
+        </View>
+
         {/* Theme Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Theme</Text>
@@ -89,15 +132,7 @@ export default function Settings() {
           </Card>
         </View>
 
-        {/* Language Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Language</Text>
-          <Card style={styles.sectionCard}>
-            <View style={styles.cardContent}>
-              <LanguagePicker selectedValue={language} onValueChange={changeLanguage} />
-            </View>
-          </Card>
-        </View>
+
 
         {/* Privacy Section */}
         <View style={styles.section}>
@@ -116,21 +151,6 @@ export default function Settings() {
                 <Text style={styles.settingText}>Notifications</Text>
                 <Switch value={notifications} onValueChange={setNotifications} />
               </View>
-            </View>
-          </Card>
-        </View>
-
-        {/* Content Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Content</Text>
-          <Card style={styles.sectionCard}>
-            <View style={styles.cardContent}>
-              <TouchableOpacity style={styles.languageOption} onPress={() => Alert.alert('Age Rating', 'Set to All Ages')}>
-                <Text style={styles.languageText}>Age Rating: All Ages</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.languageOption} onPress={() => Alert.alert('Content Filters', 'Enable Safe Content')}>
-                <Text style={styles.languageText}>Content Filters: Enabled</Text>
-              </TouchableOpacity>
             </View>
           </Card>
         </View>
@@ -261,7 +281,22 @@ const getStyles = (isDarkMode: boolean) => StyleSheet.create({
   },
   logoutButton: {
     width: '100%',
-    backgroundColor: '#16759dff',
+    backgroundColor: '#fefcfcff',
+  },
+  profileOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  editIcon: {
+    marginLeft: 'auto',
+    padding: 5,
   },
   modalOverlay: {
     flex: 1,

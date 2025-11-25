@@ -2,6 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Dimensions, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import { countries } from './constants/countries';
+
 import Button from './components/Button';
 import Card from './components/Card';
 import Input from './components/Input';
@@ -34,11 +37,9 @@ export default function Signup() {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    // Blockchain Digital ID creation logic here (e.g., using ethers.js)
     console.log('Creating blockchain digital ID for:', userData.email);
-    // Simulate signup
     try {
-      const uniqueId = Math.random().toString(36).substr(2, 9); // Simple unique ID
+      const uniqueId = Math.random().toString(36).substr(2, 9);
       await AsyncStorage.setItem('userToken', 'fake-token');
       await AsyncStorage.setItem('userEmail', userData.email);
       await AsyncStorage.setItem('userName', userData.name);
@@ -87,10 +88,15 @@ export default function Signup() {
           </View>
           <View style={styles.inputGroup}>
             <Label>Country of Origin</Label>
-            <Input
-              placeholder="Select your country"
+            <RNPickerSelect
+              onValueChange={(value: string) => handleInputChange('country', value)}
+              items={countries}
+              placeholder={{ label: 'Select your country', value: '' }}
               value={userData.country}
-              onChangeText={(text) => handleInputChange('country', text)}
+              style={{
+                inputIOS: styles.pickerInput,
+                inputAndroid: styles.pickerInput,
+              }}
             />
           </View>
           <View style={styles.inputGroup}>
@@ -181,5 +187,16 @@ const styles = StyleSheet.create({
   fullButton: {
     width: '100%',
     marginVertical: 5,
+  },
+  pickerInput: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    color: '#333',
+    backgroundColor: '#fff',
+    marginBottom: 10,
   },
 });

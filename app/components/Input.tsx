@@ -5,6 +5,7 @@ interface InputProps {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
+  onSubmitEditing?: () => void;
   secureTextEntry?: boolean;
   keyboardType?: 'default' | 'email-address' | 'phone-pad';
   multiline?: boolean;
@@ -15,6 +16,7 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   value,
   onChangeText,
+  onSubmitEditing,
   secureTextEntry = false,
   keyboardType = 'default',
   multiline = false,
@@ -26,6 +28,7 @@ const Input: React.FC<InputProps> = ({
       placeholder={placeholder}
       value={value}
       onChangeText={onChangeText}
+      onSubmitEditing={onSubmitEditing}
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}
       multiline={multiline}
